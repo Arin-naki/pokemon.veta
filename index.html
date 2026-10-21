@@ -486,10 +486,9 @@ img { display: block; }
 .type-chart-legend em { font-style: normal; }
 .type-chart-legend strong { display: none; font-weight: inherit; }
 .type-chart-frame { --type-chart-surface: var(--panel); position: relative; isolation: isolate; margin-top: 10px; }
-/* Opaque rails keep scrolling cells out of the gaps around both sticky axes. */
-.type-chart-frame::before { position: absolute; z-index: 1; inset: 0 auto 0 0; width: 62px; content: ''; background: var(--type-chart-surface); pointer-events: none; }
-.type-chart-frame::after { position: absolute; z-index: 3; inset: 0 0 auto; height: 36px; content: ''; background: var(--type-chart-surface); pointer-events: none; }
-.type-chart-scroll { max-height: min(614px, max(180px, calc(100dvh - 310px))); overflow: auto; overscroll-behavior-x: none; overscroll-behavior-y: auto; }
+/* 고정 셀마다 가상 요소 두 장: ::before는 셀보다 사방 2px 큰 각진 카드색 받침판(틈을 모서리까지 덮음), ::after는 둥근 회색 셀 바탕. box-shadow 링은 둥근 모서리를 따라가 틈 모서리가 비치고, 표 바깥 가림막은 스크롤 중 합성 순서가 뒤집혀 머리글을 덮으므로 둘 다 쓰지 않는다. */
+/* 스크롤바는 스크롤 상자 안쪽에 그려지므로 목록과 같은 얇은 손잡이·투명 트랙을 쓰고, 오른쪽·아래 6px 여백으로 칸과 띄운다. 위·왼쪽 패딩은 고정 셀 오프셋(top/left 2px)과 맞물리므로 두지 않는다. */
+.type-chart-scroll { max-height: min(614px, max(180px, calc(100dvh - 310px))); overflow: auto; overscroll-behavior-x: none; overscroll-behavior-y: auto; padding: 0 6px 6px 0; scrollbar-width: thin; scrollbar-color: #c4cac5 transparent; }
 .type-chart-scroll:focus-visible { outline: 3px solid rgba(47,91,73,.28); outline-offset: 2px; border-radius: 8px; }
 .type-chart { width: 100%; min-width: 710px; table-layout: fixed; border-collapse: separate; border-spacing: 2px; font-size: var(--text-caption); }
 .type-chart-attack-column { width: 58px; }
@@ -497,6 +496,9 @@ img { display: block; }
 .type-chart th[scope='row'] { min-width: 54px; }
 .type-chart th[scope='row'], .type-chart-corner { position: sticky; left: 2px; z-index: 2; }
 .type-chart thead th { position: sticky; top: 2px; z-index: 4; }
+.type-chart thead th, .type-chart th[scope='row'] { background: transparent; }
+.type-chart thead th::before, .type-chart th[scope='row']::before { content: ''; position: absolute; inset: -2px; z-index: -2; background: var(--type-chart-surface); }
+.type-chart thead th::after, .type-chart th[scope='row']::after { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 6px; background: var(--panel-soft); }
 .type-chart .type-chart-corner { z-index: 5; }
 .type-chart td { height: 30px; min-width: 34px; padding: 0; border-radius: 6px; background: var(--panel-soft); text-align: center; vertical-align: middle; line-height: 1; }
 .type-chart-cell { display: flex; min-height: 30px; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
@@ -506,8 +508,9 @@ img { display: block; }
 .type-chart td.is-super, .type-chart-legend .is-super { color: #97562d; background: #fff0e7; }
 .type-chart td.is-resisted, .type-chart-legend .is-resisted { color: #276043; background: #eaf4ed; }
 .type-chart td.is-immune, .type-chart-legend .is-immune { color: #52617b; background: #eef1f7; }
-.type-chart th.type-chart-corner { min-width: 58px; height: 32px; overflow: hidden; box-shadow: 0 0 0 2px var(--type-chart-surface), -2px 0 0 2px var(--type-chart-surface); }
-.type-chart-corner svg { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--line); }
+.type-chart th.type-chart-corner { min-width: 58px; height: 32px; }
+.type-chart th.type-chart-corner::before { left: -4px; }
+.type-chart-corner svg { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--line); clip-path: inset(0 round 6px); }
 .type-chart-corner span { position: absolute; font-size: var(--text-micro); line-height: 1; }
 .type-chart-corner span:first-of-type { top: 5px; right: 5px; }
 .type-chart-corner span:last-of-type { bottom: 5px; left: 5px; }
