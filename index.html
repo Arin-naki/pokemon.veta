@@ -489,7 +489,9 @@ img { display: block; }
 /* 고정 셀마다 가상 요소 두 장: ::before는 셀보다 사방 2px 큰 각진 카드색 받침판(틈을 모서리까지 덮음), ::after는 둥근 회색 셀 바탕. box-shadow 링은 둥근 모서리를 따라가 틈 모서리가 비치고, 표 바깥 가림막은 스크롤 중 합성 순서가 뒤집혀 머리글을 덮으므로 둘 다 쓰지 않는다. */
 /* 스크롤바는 스크롤 상자 안쪽에 그려지므로 목록과 같은 얇은 손잡이·투명 트랙을 쓰고, 오른쪽·아래 6px 여백으로 칸과 띄운다. 위·왼쪽 패딩은 고정 셀 오프셋(top/left 2px)과 맞물리므로 두지 않는다. */
 /* 세로 탄성(macOS 고무줄 튕김)도 이 상자에서만 끈다. 끝에서 머리글과 본문이 함께 밀렸다 튕기는 현상의 원인. 모바일은 상자가 세로로 스크롤되지 않으므로 700px 이하에서 auto로 되돌려 페이지로 이어지게 한다. */
-.type-chart-scroll { max-height: min(614px, max(180px, calc(100dvh - 310px))); overflow: auto; overscroll-behavior-x: none; overscroll-behavior-y: none; padding: 0 6px 6px 0; scrollbar-width: thin; scrollbar-color: #c4cac5 transparent; }
+/* 높이 상한은 화면 높이 기준만 둔다. 고정 상한(옛 614px)은 상자 안쪽 여백·가로 스크롤바 높이만큼 내용이 밀려 몇 px짜리 세로 스크롤을 만들었다. 표 전체가 들어가는 높이(910px 이상 = 상자 자연 높이 631px + 위 217px + 아래 45px + 여유)에서는 상한을 없애 상자가 내용 높이에 맞고, 그때는 세로 스크롤이 없으므로 탄성 차단도 풀어 휠이 바깥 판으로 넘어가게 한다. */
+.type-chart-scroll { max-height: max(180px, calc(100dvh - 310px)); overflow: auto; overscroll-behavior-x: none; overscroll-behavior-y: none; padding: 0 6px 6px 0; scrollbar-width: thin; scrollbar-color: #c4cac5 transparent; }
+@media (min-height: 910px) { .type-chart-scroll { max-height: none; overscroll-behavior-y: auto; } }
 .type-chart-scroll:focus-visible { outline: 3px solid rgba(47,91,73,.28); outline-offset: 2px; border-radius: 8px; }
 .type-chart { width: 100%; min-width: 710px; table-layout: fixed; border-collapse: separate; border-spacing: 2px; font-size: var(--text-caption); }
 .type-chart-attack-column { width: 58px; }
